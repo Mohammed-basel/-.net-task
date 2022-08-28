@@ -1,8 +1,10 @@
 ﻿using employeeAPI.models;
+using first_.net_task.services;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace employeeAPI.services
 {
-    public class employeeservice
+    public class employeeservice : employeeinterface
     {
         static List<employee> employeeslist { get; }
         static int nextempid = 4;
@@ -16,29 +18,39 @@ namespace employeeAPI.services
 
             };
         }
-        public static List<employee> GETALL() => employeeslist;
+        
 
-        public static employee GET(int id) => employeeslist.FirstOrDefault(p => p.Id == id);
-
-        public static void Add(employee employee)
+        public async Task<List<employee>> Create(employee employees)
         {
-            employee.Id = nextempid++;
-            employeeslist.Add(employee);
+            employeeslist.Add(employees);
+            return (employeeslist);
         }
-        public static void Update(employee employee)
-        {
-            var index = employeeslist.FindIndex(e => e.Id == employee.Id);
-            if (index == -1)
-                return;
-            employeeslist[index] = employee;
 
-        }
-        public static void Delete(int id)
+        public async Task<List<employee>> Delete(int id)
         {
-            var employee = GET(id);
-            if(employee is null)
-                return;
+            employee employee = employeeslist.First(x => x.Id == id);
             employeeslist.Remove(employee);
+            return (employeeslist);
+        }
+
+        public async Task<employee> GetById(int id)
+        {
+            return (employeeslist.First(x => x.Id == id)); 
+        }
+
+        public async Task<List<employee>> GET() {
+            return employeeslist;
+                }
+            
+
+
+        public async Task<List<employee>> Update(int Id,employee update)
+        {
+            ;
+            employee employee = employeeslist.First(x => x.Id == update.Id);
+            employee.Name = update.Name;
+            employee.Name = update.Name;
+            return (employeeslist);
         }
     }
 }

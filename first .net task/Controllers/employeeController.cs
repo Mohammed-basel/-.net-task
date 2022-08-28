@@ -1,5 +1,6 @@
 ﻿using employeeAPI.models;
 using employeeAPI.services;
+using first_.net_task.services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,43 +10,40 @@ namespace first_.net_task.Controllers
     [ApiController]
     public class employeeController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<List<employee>> GETALL() => employeeservice.GETALL();
-        [HttpGet("{id}")]
-        public ActionResult<employee> GET(int id)
+        public employeeinterface _employeeserves;
+
+        public employeeController(employeeinterface employeeservice)
         {
-            var employee = employeeservice.GET(id);
-            if(employee == null)
-                return NotFound();
-            return employee;
+            _employeeserves = employeeservice;
+
+            var x = 1;
+        }
+        [HttpGet("GetById/{id}")]
+        public ActionResult<employee> GetById(int id)
+        {
+            return Ok(_employeeserves.GetById(id));
+        }
+        [HttpGet]
+        public async Task<ActionResult<List<employee>>> GET()
+        {
+            return Ok(_employeeserves.GET());  
         }
         [HttpPost]
 
         public ActionResult Create(employee employee)
         {
-            employeeservice.Add(employee);
-            return CreatedAtAction(nameof(Create), new {id = employee.Id},employee);
+            return Ok(_employeeserves.Create(employee));
         }
         [HttpPut("{id}")]
         public ActionResult Update(int id, employee employee)
         {
-            if (id != employee.Id)
-                return BadRequest();
-
-            var existingemployee = employeeservice.GET(id);
-            if (existingemployee == null)
-                return NotFound();
-            employeeservice.Update(employee);
-            return NoContent();
+            return Ok(_employeeserves.Update(id,employee));
         }
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var employee = employeeservice.GET(id);
-            if (employee == null)
-                return NotFound();
-            employeeservice.Delete(id);
-            return NoContent();
+            return Ok(_employeeserves.Delete(id));
+
 
         }
     }
